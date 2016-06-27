@@ -22,7 +22,14 @@ var readlineSync = require('readline-sync');
 var host = process.argv.shift();
 var version = process.argv.shift();
 var username = process.argv.shift();
-var password = readlineSync.question('Password: ', {hideEchoBack : true});
+var password;
+
+try {
+   password = readlineSync.question('Password: ', {hideEchoBack : true});
+} catch (e){
+  console.log('Cannot read password: ', e);
+  process.exit(1);
+}
 
 var version_zip = archiver.create('zip', {});
 
