@@ -1,4 +1,4 @@
-// host zipfile username
+#!/usr/bin/env node
 'use strict';
 
 if (process.argv[0].match('node$')){
