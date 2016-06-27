@@ -48,7 +48,7 @@ var progress = (p) => {
 server.auth()
   .catch((error) => {
     console.log('Invalid Username or Password');
-    password.exit();
+    process.exit();
   })
   .then(() => {
     process.stdout.write("Deleting old files:       ... ");
