@@ -1,9 +1,11 @@
 {
-  "name": "dw-project-clean",
+  "name": "dw-utils",
   "version": "1.0.0",
   "description": "Project Clean for Demandware projects",
   "main": "index.js",
-  "bin" : {"dw-project-clean" : "./index.js" },
+  "bin": {
+    "dw-utils": "./bin/dw-utils.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "archiver": "^1.0.0",
+    "cli": "^0.11.2",
     "dw-webdav": "github:mobiushorizons/dw-webdav",
-    "readline-sync": "^1.4.4"
+    "find-project-root": "^1.1.1",
+    "read": "^1.0.7"
   }
 }

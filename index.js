@@ -6,6 +6,7 @@ if (process.argv[0].match('node$')){
 }
 
 
+console.log('Arguments: ', process.argv);
 if (process.argv.length < 3){
   console.log('Usage : ' + process.argv[0] + ' host version username');
   process.exit();
@@ -31,7 +32,7 @@ try {
   process.exit(1);
 }
 
-var version_zip = archiver.create('zip', {});
+var version_zip = new archiver.create('zip', { zlib: 2 });
 
 
 var server = new dwServer(host, username, password);
@@ -41,12 +42,12 @@ var done = () => {
 };
 
 var progress = (p) => {
-  var date = new Date(null);
-  date.setSeconds(p.eta); // specify value for SECONDS here
-  var eta = '(' + date.toISOString().substr(14, 5) + ')';
-  if (p.remaining == 0){
+  if (p.done == true){
     process.stdout.write('\r\x1b[2KUploading:                ... ');
   } else {
+    var date = new Date(null);
+    date.setSeconds(p.eta); // specify value for SECONDS here
+    var eta = '(' + date.toISOString().substr(14, 5) + ')';
     process.stdout.write('\r\x1b[2KUploading:                ... ' + p.percentage.toFixed(1) + '% ' + eta);
   }
 
@@ -74,6 +75,9 @@ server.auth()
   .then(done)
   .then(() => {
     return server.upload(version + '.zip', progress);
+  })
+  .then(() => {
+    progress({done : true})
   })
   .then(done)
   .then(() => {
