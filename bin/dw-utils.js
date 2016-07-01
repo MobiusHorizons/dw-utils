@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 var clean           = require('../clean');
+var upload          = require('../upload');
 var cli             = require('cli');
 var findProjectRoot = require('find-project-root');
 var fs              = require('fs');
 var path            = require('path');
 var read            = require('read');
 
-function prompt(){
+function prompt(opts){
   return new Promise((resolve, reject) => {
     read({ prompt : 'Password:', silent : true, replace: '*', }, (error, password)=>{
       if (error){
         reject(error);
       } else {
+
         resolve(password)
       }
     })
@@ -41,7 +43,7 @@ var copts = cli.parse({
   cartridges : ['C', 'Path to Cartridges from project root (Default is cartridges)', 'path'],
   save       : [false, 'Save settings for future use', 'bool'],
   prompt     : ['p', 'Prompt for password', 'bool'],
-}, ['clean', 'upload-version'])
+}, ['clean', 'upload', 'upload-version'])
 
 
 function usage(flag){
@@ -61,6 +63,10 @@ opts.version    = opts.version    || copts.version    || arg()              || '
 opts.username   = opts.username   || copts.username   || usage('username');
 opts.cartridges = opts.cartridges || copts.cartridges || arg()              || 'cartridges'
 
+if (cli.command == 'upload-version' || cli.command == 'upload'){
+  opts.zipfile = arg() || usage('zip file to upload')
+}
+
 var gotPassword;
 
 if (!opts.password || copts.prompt) {
@@ -78,8 +84,15 @@ gotPassword.then((password) => {
   opts.root = root;
   opts.cartridges = path.join(root, opts.cartridges);
   opts.prompt = prompt;
-
-  if (cli.command == 'clean'){
-    clean(opts);
+  
+  switch (cli.command){
+    case 'clean':
+      clean(opts);
+      break;
+    case 'upload': case 'upload-version':
+      upload(opts);
+      break;
+    default: 
+      usage('command')
   }
 })

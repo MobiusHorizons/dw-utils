@@ -2,8 +2,10 @@
   "name": "dw-utils",
   "version": "1.0.0",
   "description": "Project Clean for Demandware projects",
-  "main": "index.js",
+  "main": "bin/dw-utils.js",
   "bin": {
+    "dw-clean": "./bin/dw-utils.js clean",
+    "dw-upload": "./bin/dw-utils.js upload-version",
     "dw-utils": "./bin/dw-utils.js"
   },
   "scripts": {
