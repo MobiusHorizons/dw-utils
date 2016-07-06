@@ -1,11 +1,9 @@
 {
   "name": "dw-utils",
-  "version": "1.0.0",
-  "description": "Project Clean for Demandware projects",
+  "version": "1.0.3",
+  "description": "Code Upload utilities for Demandware projects",
   "main": "bin/dw-utils.js",
   "bin": {
-    "dw-clean": "./bin/dw-utils.js clean",
-    "dw-upload": "./bin/dw-utils.js upload-version",
     "dw-utils": "./bin/dw-utils.js"
   },
   "scripts": {
@@ -13,11 +11,16 @@
   },
   "author": "paul.martin@cqlcorp.com",
   "license": "ISC",
+  "repository" : {
+    "type": "git",
+    "url" : "https://github.com/MobiusHorizons/dw-utils.git"
+  },
   "dependencies": {
-    "archiver": "^1.0.0",
     "cli": "^0.11.2",
     "dw-webdav": "github:mobiushorizons/dw-webdav",
     "find-project-root": "^1.1.1",
-    "read": "^1.0.7"
+    "glob": "^7.0.5",
+    "read": "^1.0.7",
+    "yazl": "^2.4.1"
   }
 }

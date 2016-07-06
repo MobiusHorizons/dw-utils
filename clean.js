@@ -1,7 +1,7 @@
 function clean(config){
   'use strict';
 
-  var archiver = require('archiver');
+  var utils = require('./utils.js')
   var fs = require('fs');
   var dwServer = require('dw-webdav');
 
@@ -10,8 +10,6 @@ function clean(config){
   var username   = config.username;
   var cartridges = config.cartridges;
   var password   = config.password;
-
-  var version_zip = new archiver.create('zip', { zlib: 2 });
 
   var server = new dwServer(host, username, password);
 
@@ -42,18 +40,15 @@ function clean(config){
   server.auth()
   .catch(authError)
   .then(() => {
-    process.stdout.write("Deleting old files:       ... ");
-    var d = server.delete(version).then(() => {
-      done();
-      process.stdout.write("Zipping local files:      ... ");
-    });
-    var z = new Promise((resolve, reject) => {
-      version_zip.directory(cartridges, version);
-      version_zip.on('end', resolve).on('error', reject);
-      version_zip.finalize()
-      .pipe(fs.createWriteStream(version + '.zip'));
-    });
-    return Promise.all([d,z]); // wait for next step until both are finished.
+    process.stdout.write("Zipping local files:      ... ");
+    return utils.zip(cartridges, version, version  + '.zip')
+    //var z = new Promise((resolve, reject) => {
+      //version_zip.directory(cartridges, version);
+      //version_zip.on('end', resolve).on('error', reject);
+      //version_zip.finalize()
+      //.pipe(fs.createWriteStream(version + '.zip'));
+    //});
+    //return Promise.all([d,z]); // wait for next step until both are finished.
   })
   .then(done)
   .then(() => {
@@ -61,6 +56,11 @@ function clean(config){
   })
   .then(() => {
     progress({done : true})
+  })
+  .then(done)
+  .then(() => {
+    process.stdout.write("Deleting old files:       ... ");
+    return server.delete(version)
   })
   .then(done)
   .then(() => {
