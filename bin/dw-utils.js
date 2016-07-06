@@ -1,24 +1,11 @@
 #!/usr/bin/env node
 var clean           = require('../clean');
 var upload          = require('../upload');
+var prompt          = require('../prompt');
 var cli             = require('cli');
 var findProjectRoot = require('find-project-root');
 var fs              = require('fs');
 var path            = require('path');
-var read            = require('read');
-
-function prompt(opts){
-  return new Promise((resolve, reject) => {
-    read({ prompt : 'Password:', silent : true, replace: '*', }, (error, password)=>{
-      if (error){
-        reject(error);
-      } else {
-
-        resolve(password)
-      }
-    })
-  });
-}
 
 var root = findProjectRoot(process.cwd(), {
   maxDepth: 12,
@@ -43,7 +30,7 @@ var copts = cli.parse({
   cartridges : ['C', 'Path to Cartridges from project root (Default is cartridges)', 'path'],
   save       : [false, 'Save settings for future use', 'bool'],
   prompt     : ['p', 'Prompt for password', 'bool'],
-}, ['clean', 'upload', 'upload-version'])
+}, ['clean', 'upload', 'upload-version', 'init'])
 
 
 function usage(flag){
@@ -58,41 +45,47 @@ function arg(){
   return undefined
 }
 
-opts.hostname   = opts.hostname   || copts.hostname   || arg()              || usage('hostname');
-opts.version    = opts.version    || copts.version    || arg()              || 'version1';
-opts.username   = opts.username   || copts.username   || usage('username');
-opts.cartridges = opts.cartridges || copts.cartridges || arg()              || 'cartridges'
-
-if (cli.command == 'upload-version' || cli.command == 'upload'){
-  opts.zipfile = arg() || usage('zip file to upload')
-}
-
-var gotPassword;
-
-if (!opts.password || copts.prompt) {
-  gotPassword = prompt()
+if (cli.command == 'init'){
+  prompt.init(opts).then((config) => {
+    fs.writeFileSync(path.join(root, 'dw.json'), JSON.stringify(config, null, 2))
+  })
 } else {
-  gotPassword = Promise.resolve(opts.password)
+
+  opts.hostname   = opts.hostname   || copts.hostname   || arg()              || usage('hostname');
+  opts.version    = opts.version    || copts.version    || arg()              || 'version1';
+  opts.username   = opts.username   || copts.username   || usage('username');
+  opts.cartridges = opts.cartridges || copts.cartridges || arg()              || 'cartridges'
+
+  if (cli.command == 'upload-version' || cli.command == 'upload'){
+    opts.zipfile = arg() || usage('zip file to upload')
+  }
+
+  var gotPassword;
+
+  if (!opts.password || copts.prompt) {
+    gotPassword = prompt.getPassword(opts)
+  } else {
+    gotPassword = Promise.resolve(opts.password)
+  }
+
+  gotPassword.then((opts) => {
+    if (copts.save){
+      fs.writeFileSync(path.join(root, 'dw.json'), JSON.stringify(opts, null, 2))
+    }
+
+    opts.root = root;
+    opts.cartridges = path.join(root, opts.cartridges);
+    opts.prompt = prompt;
+    
+    switch (cli.command){
+      case 'clean':
+        clean(opts);
+        break;
+      case 'upload': case 'upload-version':
+        upload(opts);
+        break;
+      default: 
+        usage('command')
+    }
+  })
 }
-
-gotPassword.then((password) => {
-  opts.password = password;
-  if (copts.save){
-    fs.writeFileSync(path.join(root, 'dw.json'), JSON.stringify(opts, null, 2))
-  }
-
-  opts.root = root;
-  opts.cartridges = path.join(root, opts.cartridges);
-  opts.prompt = prompt;
-  
-  switch (cli.command){
-    case 'clean':
-      clean(opts);
-      break;
-    case 'upload': case 'upload-version':
-      upload(opts);
-      break;
-    default: 
-      usage('command')
-  }
-})
