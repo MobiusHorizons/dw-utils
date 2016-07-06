@@ -65,7 +65,7 @@ if (cli.command == 'init'){
   if (!opts.password || copts.prompt) {
     gotPassword = prompt.getPassword(opts)
   } else {
-    gotPassword = Promise.resolve(opts.password)
+    gotPassword = Promise.resolve(opts)
   }
 
   gotPassword.then((opts) => {

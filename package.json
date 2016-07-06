@@ -1,6 +1,6 @@
 {
   "name": "dw-utils",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Code Upload utilities for Demandware projects",
   "main": "bin/dw-utils.js",
   "bin": {
