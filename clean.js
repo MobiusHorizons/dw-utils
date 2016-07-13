@@ -1,36 +1,35 @@
 function clean(config){
-  'use strict';
+  'use strict'
 
   var utils = require('./utils.js')
-  var fs = require('fs');
-  var dwServer = require('dw-webdav');
+  var fs = require('fs')
+  var dwServer = require('dw-webdav')
 
-  var host       = config.hostname;
-  var version    = config.version;
-  var username   = config.username;
-  var cartridges = config.cartridges;
-  var password   = config.password;
+  var host       = config.hostname
+  var version    = config.version
+  var username   = config.username
+  var cartridges = config.cartridges
+  var password   = config.password
 
-  var server = new dwServer(host, username, password);
+  var server = new dwServer(host, username, password)
 
   var done = () => {
-    console.log('done');
-  };
+    console.log('done')
+  }
 
   var progress = (p) => {
     if (p.done == true){
-      process.stdout.write('\r\x1b[2KUploading:                ... ');
+      process.stdout.write('\r\x1b[2KUploading:                ... ')
     } else {
-      var date = new Date(null);
-      date.setSeconds(p.eta); // specify value for SECONDS here
-      var eta = '(' + date.toISOString().substr(14, 5) + ')';
-      process.stdout.write('\r\x1b[2KUploading:                ... ' + p.percentage.toFixed(1) + '% ' + eta);
+      var date = new Date(null)
+      date.setSeconds(p.eta) // specify value for SECONDS here
+      var eta = '(' + date.toISOString().substr(14, 5) + ')'
+      process.stdout.write('\r\x1b[2KUploading:                ... ' + p.percentage.toFixed(1) + '% ' + eta)
     }
-
   }
   
-  function authError(error){
-    console.log('Invalid Username or Password');
+  function authError(){
+    console.log('Invalid Username or Password')
     return config.prompt().then((password) =>{
       server = new dwServer(host, username, password)
       return server.auth()
@@ -40,53 +39,46 @@ function clean(config){
   server.auth()
   .catch(authError)
   .then(() => {
-    process.stdout.write("Zipping local files:      ... ");
+    process.stdout.write('Zipping local files:      ... ')
     return utils.zip(cartridges, version, version  + '.zip')
-    //var z = new Promise((resolve, reject) => {
-      //version_zip.directory(cartridges, version);
-      //version_zip.on('end', resolve).on('error', reject);
-      //version_zip.finalize()
-      //.pipe(fs.createWriteStream(version + '.zip'));
-    //});
-    //return Promise.all([d,z]); // wait for next step until both are finished.
   })
   .then(done)
   .then(() => {
-    return server.upload(version + '.zip', progress);
+    return server.upload(version + '.zip', progress)
   })
   .then(() => {
     progress({done : true})
   })
   .then(done)
   .then(() => {
-    process.stdout.write("Deleting old files:       ... ");
+    process.stdout.write('Deleting old files:       ... ')
     return server.delete(version)
   })
   .then(done)
   .then(() => {
-    process.stdout.write("Unzipping remote file:    ... ");
-    return server.unzip(version + '.zip');
+    process.stdout.write('Unzipping remote file:    ... ')
+    return server.unzip(version + '.zip')
   })
   .then(done)
   .then(() => {
-    process.stdout.write("Deleting temporary files: ... ");
-    var wait = [];
-    wait.push(server.delete(version + '.zip'));
+    process.stdout.write('Deleting temporary files: ... ')
+    var wait = []
+    wait.push(server.delete(version + '.zip'))
     wait.push(new Promise((resolve, reject) => {
       fs.unlink(version + '.zip', function(error){
         if (error){
-          reject(error);
+          reject(error)
         } else {
-          resolve();
+          resolve()
         }
-      });
-    }));
-    return Promise.all(wait);
+      })
+    }))
+    return Promise.all(wait)
   })
   .then(done)
   .catch((error) => {
-    console.log("Error: ", error);
-  });
+    console.log('Error: ', error)
+  })
 }
 
-module.exports = clean;
+module.exports = clean

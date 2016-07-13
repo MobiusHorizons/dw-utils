@@ -1,6 +1,6 @@
 {
   "name": "dw-utils",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Code Upload utilities for Demandware projects",
   "main": "bin/dw-utils.js",
   "bin": {
@@ -11,16 +11,19 @@
   },
   "author": "paul.martin@cqlcorp.com",
   "license": "ISC",
-  "repository" : {
+  "repository": {
     "type": "git",
-    "url" : "https://github.com/MobiusHorizons/dw-utils.git"
+    "url": "https://github.com/MobiusHorizons/dw-utils.git"
   },
   "dependencies": {
+    "chokidar": "^1.6.0",
     "cli": "^0.11.2",
     "dw-webdav": "github:mobiushorizons/dw-webdav",
     "find-project-root": "^1.1.1",
     "glob": "^7.0.5",
     "read": "^1.0.7",
+    "watch": "^0.19.1",
+    "webdav-sync": "github:mobiushorizons/webdav-sync",
     "yazl": "^2.4.1"
   }
 }

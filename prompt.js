@@ -1,13 +1,13 @@
-'use strict';
-  var 
+'use strict'
+var 
   dwServer = require('dw-webdav'),
-    read     = require('read')
+  read     = require('read')
 
 
 function getHostname(config){
   return new Promise((resolve, reject) => {
     read({
-      'prompt' : "Hostname:",
+      'prompt' : 'Hostname:',
       'default': config.hostname 
     },(err, value) => {
       if (err){
@@ -23,7 +23,7 @@ function getHostname(config){
 function getUsername(config){
   return new Promise((resolve, reject) => {
     read({
-      'prompt' : "Username:",
+      'prompt' : 'Username:',
       'default': config.username
     },(err, value) => {
       if (err){
@@ -42,7 +42,7 @@ function getPassword(config){
       'terminal': true,
       'silent'  : true,
       'replace' : '*',
-      'prompt'  : "Password:",
+      'prompt'  : 'Password:',
     },(err, value) => {
       if (err){
         reject(err)
@@ -57,7 +57,7 @@ function getPassword(config){
 function getVersion(config){
   return new Promise((resolve, reject) => {
     read({
-      'prompt' : "Version:",
+      'prompt' : 'Version:',
       'default': config.version || 'version1'
     },(err, value) => {
       if (err){
@@ -73,7 +73,7 @@ function getVersion(config){
 function getCartridges(config){
   return new Promise((resolve, reject) => {
     read({
-      'prompt' : "Cartridge Path:",
+      'prompt' : 'Cartridge Path:',
       'default': config.cartridges || 'cartridges'
     },(err, value) => {
       if (err){
@@ -93,14 +93,14 @@ function init(config){
       console.log('Error: ', error)
     }
     return getHostname(config)
-      .then(getUsername)
-      .then(getPassword)
-      .then((config) => {
-        var server = new dwServer(config.hostname, config.username, config.password);
-        return server.auth().then(() => {
-          return config
-        })
+    .then(getUsername)
+    .then(getPassword)
+    .then((config) => {
+      var server = new dwServer(config.hostname, config.username, config.password)
+      return server.auth().then(() => {
+        return config
       })
+    })
   }
   return creds()
   .catch(creds)
@@ -109,9 +109,9 @@ function init(config){
 }
 
 
-module.exports.init = init;
-module.exports.getHostname = getHostname;
-module.exports.getUsername = getUsername;
-module.exports.getPassword = getPassword;
-module.exports.getVersion = getVersion;
-module.exports.getCartridges = getCartridges;
+module.exports.init = init
+module.exports.getHostname = getHostname
+module.exports.getUsername = getUsername
+module.exports.getPassword = getPassword
+module.exports.getVersion = getVersion
+module.exports.getCartridges = getCartridges
