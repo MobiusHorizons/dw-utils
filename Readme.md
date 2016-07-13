@@ -10,6 +10,8 @@ The binary provides the following commands.
 | `dw-utils clean`  | Equivalant to a project clean in eclipse  |
 | `dw-utils upload` | Upload a zipped code version to a sandbox |
 | `dw-utils init`   | Interactively enter configuation options  |
+| `dw-utils watch`  | Watch cartridge path and upload changes   |
+
 ## Credentials
 
 Credentials are stored in a file called `dw.json` in the root of the project.
