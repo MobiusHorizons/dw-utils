@@ -4,6 +4,7 @@ var clean           = require('../clean')
 var upload          = require('../upload')
 var watch           = require('../watch.js')
 var prompt          = require('../prompt')
+var log             = require('../log')
 var cli             = require('cli')
 var findProjectRoot = require('find-project-root')
 var fs              = require('fs')
@@ -32,7 +33,8 @@ var copts = cli.parse({
   cartridges : ['C', 'Path to Cartridges from project root (Default is cartridges)', 'path'],
   save       : [false, 'Save settings for future use', 'bool'],
   prompt     : ['p', 'Prompt for password', 'bool'],
-}, ['clean', 'upload', 'upload-version', 'init', 'watch'])
+  interval   : ['i', 'Polling interval (in seconds) for log watching', 'number', 5], 
+}, ['clean', 'upload-version', 'init', 'watch', 'log'])
 
 
 function usage(flag){
@@ -58,8 +60,14 @@ if (cli.command == 'init'){
   opts.username   = copts.username   || opts.username   || usage('username')
   opts.cartridges = copts.cartridges || opts.cartridges || arg()              || 'cartridges'
 
-  if (cli.command == 'upload-version' || cli.command == 'upload'){
+  switch(cli.command){ // command specific arguments
+  case 'upload-version':
     opts.zipfile = arg() || usage('zip file to upload')
+    break
+  case 'log':
+    opts.level = arg()
+    opts.interval = copts.interval * 1000
+    break
   }
 
   var gotPassword
@@ -88,6 +96,9 @@ if (cli.command == 'init'){
       break
     case 'watch':
       watch(opts)
+      break
+    case 'log':
+      log(opts)
       break
     default: 
       usage('command')
