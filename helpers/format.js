@@ -13,12 +13,19 @@ function firstline(line){
 
 const states = ['start', 'sysinfo', 'reqinfo', 'reqparams', 'stacktrace']
 var stateRegexes = {
-  'start'     : /\[\d{4}-\d\d-\d\d 1?\d:\d\d:\d\d.\d{3} \w{3}\]/,
+  'start'     : /\[\d{4}-\d\d-\d\d [01]?\d:\d\d:\d\d.\d{3} \w{3}\]/,
   'separator' : /------------------/,
   'sysinfo'   : /System Information/,
   'reqinfo'   : /Request Information/,
   'reqparams' : /Request Parameters/,
   'stacktrace': /Stack trace <[\da-f]+>/,
+}
+
+function center(start, fill, title, end){
+  let width = process.stdout.columns;
+  let leftFill = (width - title.length)/2 - start.length;
+  let rightFill = (width - title.length)/2 - end.length;
+  return `${start}${fill.repeat(leftFill)}${title}${fill.repeat(rightFill)}${end}`;
 }
 
 class DWLogFormatter extends Transform{
@@ -56,6 +63,7 @@ class DWLogFormatter extends Transform{
 
   }
   _transform(chunk, encoding, cb){
+    this.push(chalk.magenta(center('[', '-', (new Date()).toTimeString().substring(0,8), ']') + '\n'))
     let lines = (chunk.toString().split('\n'))
     for (var i = 0; i < lines.length; i++){
       let line = lines[i];

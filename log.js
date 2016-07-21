@@ -16,15 +16,14 @@ function log(config){
     let newest_error_log = entries.filter( entry => {
       let regex = new RegExp(`^${level}-blade`)
       let result = regex.test(entry.propstat.prop.displayname)
-
       return result
     })
     .sort((a, b) => {
       let am = new Date(a.propstat.prop.getlastmodified);
       let bm = new Date(b.propstat.prop.getlastmodified);
-      let difference = am - bm;
+      let difference = bm - am;
       return difference / Math.abs(difference)
-    })[0]
+    })[0];
 
     let logFile = new Tail({poll_interval: config.interval}, server, '../Logs/' + newest_error_log.propstat.prop.displayname)
     logFile
