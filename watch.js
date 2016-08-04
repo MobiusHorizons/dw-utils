@@ -47,7 +47,14 @@ function watch(config){
         out(file[2], file[3])
       }
     })
-    .catch(error)
+    .catch(error => {
+      out.chalk.red(`[x] Bulk updating ${zip_files.length} items: ${error.code}`, line)      
+      for (var i = 0; i < zip_files.length; i++){
+        var file = zip_files[i]
+        let failure = chalk.red(chalk.stripColor(file[2].replace('[*]', '[x]')));
+        out(failure, file[3])
+      }
+    })
     .then(() => {
       uploading = false
       process_queue()
@@ -86,7 +93,10 @@ function watch(config){
     .then(() => {
       out(success,line)
     })
-    .catch(error)
+    .catch(error => {
+      let failure = chalk.red(chalk.stripColor(success.replace(/\[\*\]/, "[x]")))
+      out(failure, line)
+    })
     .then(() => {
       uploading = false
       process_queue()
@@ -145,7 +155,7 @@ function watch(config){
   }
 
   function error(error){
-    out(error)
+    out(JSON.stringify(error))
   }
 
   function ready(){

@@ -30,8 +30,8 @@ function clean(config){
   
   function authError(){
     console.log('Invalid Username or Password')
-    return config.prompt().then((password) =>{
-      server = new dwServer(host, username, password)
+    return config.prompt(config).then((config) =>{
+      server = new dwServer(config.host, config.username, config.password)
       return server.auth()
     }).catch(authError)
   }

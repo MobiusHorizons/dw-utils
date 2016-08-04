@@ -35,8 +35,8 @@ function zip(cartridges, metadataPath, outfile){
       })
 
       zipfile.outputStream.pipe(fs.createWriteStream(outfile))
-      .on('end', () => {
-        console.log('write Stream Ended')
+      .on('end', (code) => {
+        console.log('write Stream Ended', code, '\n')
       })
       .on('error', (err) => {
         reject(err)
@@ -66,10 +66,12 @@ function zipFiles(files, local_base, remote_base, server){
     })
 
     zipfile.outputStream.pipe(server.upload_stream(tempzip))
-    .on('end', () => {
+    .on('end', (code) => {
+      console.log('Got End:', code, ' \n');
       resolve(tempzip)
     })
     .on('error', (err) => {
+      console.log('Got Error: ', err,'\n');
       reject(err)
     })
   })

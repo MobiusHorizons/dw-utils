@@ -85,7 +85,7 @@ if (cli.command == 'init'){
 
     opts.root = root
     opts.cartridges = path.join(root, opts.cartridges)
-    opts.prompt = prompt
+    opts.prompt = prompt.getPassword
 
     switch (cli.command){
     case 'clean':
