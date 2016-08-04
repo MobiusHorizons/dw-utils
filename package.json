@@ -1,6 +1,6 @@
 {
   "name": "dw-utils",
-  "version": "1.3.4",
+  "version": "1.3.6",
   "description": "Code Upload utilities for Demandware projects",
   "main": "bin/dw-utils.js",
   "bin": {
@@ -25,7 +25,6 @@
     "read": "^1.0.7",
     "shortid": "^2.2.6",
     "watch": "^0.19.1",
-    "webdav-sync": "github:mobiushorizons/webdav-sync",
     "yazl": "^2.4.1"
   }
 }

@@ -65,9 +65,13 @@ class DWLogFormatter extends Transform{
   _transform(chunk, encoding, cb){
     this.push(chalk.magenta(center('[', '-', (new Date()).toTimeString().substring(0,8), ']') + '\n'))
     let lines = (chunk.toString().split('\n'))
+    var lineDelay = 300 / lines.length;
+    function queue(line, i, push){
+      setTimeout(() => {push(line)}, i * lineDelay);
+    }
     for (var i = 0; i < lines.length; i++){
       let line = lines[i];
-      this.push(this.match(line))
+      queue(this.match(line), i, this.push.bind(this));
     }
     cb()
   }
