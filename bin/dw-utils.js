@@ -33,6 +33,7 @@ var copts = cli.parse({
   cartridges : ['C', 'Path to Cartridges from project root (Default is cartridges)', 'path'],
   save       : [false, 'Save settings for future use', 'bool'],
   prompt     : ['p', 'Prompt for password', 'bool'],
+  stability  : ['s', 'Stability theshold in ms for file watching', 'number',  /^win/.test(process.platform)?500:100],
   interval   : ['i', 'Polling interval (in seconds) for log watching', 'number', 5], 
 }, ['clean', 'upload-version', 'init', 'watch', 'log'])
 
@@ -86,6 +87,7 @@ if (cli.command == 'init'){
     opts.root = root
     opts.cartridges = path.join(root, opts.cartridges)
     opts.prompt = prompt.getPassword
+    opts.stabilityThreshold = copts.stability
 
     switch (cli.command){
     case 'clean':

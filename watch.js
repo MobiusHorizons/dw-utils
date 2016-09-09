@@ -165,7 +165,9 @@ function watch(config){
     out(chalk.yellow.bold(' -- Waiting for changes --'))
   }
 
-  chokidar.watch(cartridges, {persistent: true, ignoreInitial: true, awaitWriteFinish: {stabilityThreshold: 100,pollInterval: 100}})
+  chokidar.watch(cartridges, {persistent: true, ignoreInitial: true, awaitWriteFinish: {
+    stabilityThreshold: config.stabilityThreshold, pollInterval: 50}
+  })
   .on('add'   , upload('added'))
   .on('change', upload('changed'))
   .on('unlink', unlink)

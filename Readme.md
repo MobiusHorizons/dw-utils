@@ -25,15 +25,16 @@ dw-utils will create such a file if called with the `--save` option, or interact
 
 The following flags are recognized
 
-| Flag             | Description                                                    |
-| ----             | :----------                                                    |
-| -V, --version    | Code version to upload to (defaults to 'version1')             |
-| -H, --hostname   | Hostname of remote DW server                                   |
-| -u, --username   | Username for WebDav (Same as Business Manager)                 |
-| -C, --cartridges | Path to Cartridges from project root (Default is 'cartridges') |
-| --save           | Save settings for future use                                   |
-| -p, --prompt     | Prompt for password                                            |
-| -h, --help       | Display help and usage details                  
+| Flag             | Description                                                          |
+| ----             | :----------                                                          |
+| -V, --version    | Code version to upload to (defaults to 'version1')                   |
+| -H, --hostname   | Hostname of remote DW server                                         |
+| -u, --username   | Username for WebDav (Same as Business Manager)                       |
+| -C, --cartridges | Path to Cartridges from project root (Default is 'cartridges')       |
+| --save           | Save settings for future use                                         |
+| -S, --stability  | Length of time the file's size should stay the same before uploading |
+| -p, --prompt     | Prompt for password                                                  |
+| -h, --help       | Display help and usage details                                       |
 
 
 # Command Details
@@ -71,7 +72,9 @@ source controll.
 
 Watch for changes to files in the `cartridge` directory and upload them. 
 This uploader will bulk upload files if there are more than 5 waiting to be uploaded, which results in very fast uploads
-even when there are a lot of changes.
+even when there are a lot of changes. 
+
+**NOTE:** if you have stability issues or encounter a lot of errors, try upping the `--stability` flag.
 
 ## Log
 > **Usage:** `dw-utils log [level]`
