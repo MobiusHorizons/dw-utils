@@ -1,11 +1,13 @@
+'use strict'
+var
+  chalk    = require('chalk'),
+  chokidar = require('chokidar'),
+  dwServer = require('dw-webdav'),
+  path     = require('path'),
+  sliceAnsi= require('slice-ansi'),
+  utils    = require('./utils')
+
 function watch(config){
-  'use strict'
-  var
-    chalk    = require('chalk'),
-    chokidar = require('chokidar'),
-    dwServer = require('dw-webdav'),
-    path     = require('path'),
-    utils    = require('./utils')
   
   
   var host       = config.hostname
@@ -104,6 +106,7 @@ function watch(config){
   }
 
   function out(value, line){
+    value = squeeze(value);
     var newline = (line == null)
 
     line = line || current_line
@@ -171,6 +174,138 @@ function watch(config){
   .on('error', error)
   .on('ready', ready)
 
+}
+const lowPriority = [
+  new RegExp('/(cartridge)/'),
+  new RegExp('/(default)/'),
+  new RegExp('/(static)/'),
+  new RegExp('(\.generated\.)'),
+  new RegExp('( was )'), 
+  new RegExp('\s(\w*_)'),
+  new RegExp('ch(anged)'),
+  new RegExp('del(eted)'),
+  new RegExp('cr(eated)'),
+
+];
+
+const elipsis = chalk.gray('\u2026');
+
+function chalkStyle(value){
+  // return the chalk style function for the value
+  const codes = [
+    chalk.styles.red.open,
+    chalk.styles.green.open,
+    chalk.styles.yellow.open,
+    chalk.styles.blue.open,
+    chalk.styles.magenta.open,
+    chalk.styles.cyan.open,
+    chalk.styles.white.open,
+    chalk.styles.gray.open,
+    chalk.styles.black.open,
+    chalk.styles.bold.open,
+    chalk.styles.dim.open,
+    chalk.styles.italic.open,
+    chalk.styles.underline.open,
+    chalk.styles.inverse.open,
+    chalk.styles.strikethrough.open,
+    chalk.styles.bgRed.open,
+    chalk.styles.bgGreen.open,
+    chalk.styles.bgYellow.open,
+    chalk.styles.bgBlue.open,
+    chalk.styles.bgMagenta.open,
+    chalk.styles.bgCyan.open,
+    chalk.styles.bgWhite.open,
+    chalk.styles.bgBlack.open,
+  ];
+  const styles = [
+    'red',
+    'green',
+    'yellow',
+    'blue',
+    'magenta',
+    'cyan',
+    'white',
+    'gray',
+    'black',
+    'bold',
+    'dim',
+    'italic',
+    'underline',
+    'inverse',
+    'strikethrough',
+    'bgRed',
+    'bgGreen',
+    'bgYellow',
+    'bgBlue',
+    'bgMagenta',
+    'bgCyan',
+    'bgWhite',
+    'bgBlack',
+  ];
+
+  var style = chalk.reset;
+  if (chalk.hasColor(value)){
+    let colorless = chalk.stripColor(value);
+    var open = value.substring(0, value.indexOf(colorless));
+
+    for (let i = 0; i < codes.length; i++){
+      let code = codes[i];
+      if (open.indexOf(code) > -1){
+        style = style[styles[i]];
+      }
+    }
+  }
+  return style;
+}
+
+function length(value){
+  return chalk.stripColor(value).length;
+}
+
+function squeeze(value){
+  // Fit input to console;
+  let style = chalkStyle(value);
+  let width = process.stdout.columns;
+  if (width && width > 0 && width < length(value)){
+    // do the squeezing
+    for (let i = 0; length(value) > width && i < lowPriority.length; i++){
+      let r = lowPriority[i];
+      var m = r.exec(value);
+      if (m && m.length > 1){
+        let toRemove = length(value) - width;
+        let replacement = squeezeMiddle(m[1], toRemove);
+        value = style(
+          value.substring(0, value.indexOf(m[1], m.index)) + 
+          replacement.start +
+          elipsis +
+          replacement.end +
+          value.substring(value.indexOf(m[1], m.index) + m[1].length)
+        );
+      }
+    }
+
+    if (length(value) <= width){
+      return value;
+    }
+
+    let replacement = squeezeMiddle(value, length(value) - width);
+    return style(replacement.start + elipsis + replacement.end);
+  } else {
+    return value;
+  }
+}
+
+function squeezeMiddle(value, chars){
+  //'0123456789' => '01…89'
+  // remove `chars` characters from the middle of value;
+  if (chars >= length(value)){
+    return { start : '', end : ''};
+  }
+  var start = Math.ceil(( length(value) - (chars + 1) ) / 2)
+  return {
+    start : sliceAnsi(value, 0,start),
+    end : sliceAnsi(value, start + chars + 1),
+  }
 }
 
 module.exports = watch
