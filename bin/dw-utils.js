@@ -56,10 +56,10 @@ if (cli.command == 'init'){
   })
 } else {
 
-  opts.hostname   = copts.hostname   || opts.hostname   || arg()              || usage('hostname')
-  opts.version    = copts.version    || opts.version    || arg()              || 'version1'
+  opts.hostname   = copts.hostname   || opts.hostname   || usage('hostname')
+  opts.version    = copts.version    || opts.version    || 'version1'
   opts.username   = copts.username   || opts.username   || usage('username')
-  opts.cartridges = copts.cartridges || opts.cartridges || arg()              || 'cartridges'
+  opts.cartridges = copts.cartridges || opts.cartridges || 'cartridges'
 
   switch(cli.command){ // command specific arguments
   case 'upload-version':
