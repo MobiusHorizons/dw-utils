@@ -3,8 +3,11 @@
 var Transform = require('stream').Transform
 var chalk = require('chalk')
 
-function sep(){
-  return chalk.red('<' + '='.repeat(process.stdout.columns - 2) + '>\n')
+function sep(name){
+  return chalk.red(
+    center('<','=', (`[ ${chalk.gray.underline(name)} ]`), '>') + '\n'
+  )
+  //return chalk.red('<' + '='.repeat(process.stdout.columns - 2) + '>\n')
 }
 
 function firstline(line){
@@ -22,15 +25,17 @@ var stateRegexes = {
 }
 
 function center(start, fill, title, end){
+  let titleLength = chalk.stripColor(title).length;
   let width = process.stdout.columns;
-  let leftFill = (width - title.length)/2 - start.length;
-  let rightFill = (width - title.length)/2 - end.length;
+  let leftFill = (width - titleLength)/2 - chalk.stripColor(start).length;
+  let rightFill = Math.ceil((width - titleLength)/2) - chalk.stripColor(end).length;
   return `${start}${fill.repeat(leftFill)}${title}${fill.repeat(rightFill)}${end}`;
 }
 
 class DWLogFormatter extends Transform{
   constructor(options){
     super(options)
+    this.name = options.name ||'';
     this.state = 'default'
     this.lineBuffer = '' // holds partial lines (unlikely)
   }
@@ -45,7 +50,7 @@ class DWLogFormatter extends Transform{
     }
     switch (this.state){
     case 'start':
-      line = transition ? sep() + chalk.yellow(line): chalk.yellow(line)
+      line = transition ? sep(this.name) + chalk.yellow(line): chalk.yellow(line)
       break;
     case 'sysinfo':
       line = transition ? chalk.green.underline(line) : chalk.green(line)
@@ -63,16 +68,18 @@ class DWLogFormatter extends Transform{
 
   }
   _transform(chunk, encoding, cb){
-    this.push(chalk.magenta(center('[', '-', (new Date()).toTimeString().substring(0,8), ']') + '\n'))
+    let out = "";
+    out += (chalk.magenta(center('[', '-', 
+        `| ${chalk.underline((new Date()).toTimeString().substring(0,8))} |`,
+    ']') + '\n'))
+
     let lines = (chunk.toString().split('\n'))
-    var lineDelay = 300 / lines.length;
-    function queue(line, i, push){
-      setTimeout(() => {push(line)}, i * lineDelay);
-    }
+    
     for (var i = 0; i < lines.length; i++){
       let line = lines[i];
-      queue(this.match(line), i, this.push.bind(this));
+      out += (this.match(line))
     }
+    this.push(out);
     cb()
   }
 }
