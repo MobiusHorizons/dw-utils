@@ -3,6 +3,7 @@ function upload(config){
 
   var path = require('path')
   var dwServer = require('dw-webdav')
+  var activate = require('./activate')
 
   var host       = config.hostname
   var username   = config.username
@@ -55,6 +56,13 @@ function upload(config){
     return server.delete(version)
   })
   .then(done)
+  .then(() => {
+    if (config.activate){
+      process.stdout.write('Activating version:       ... ')
+      return activate.activate(config,version)
+      .then(done)
+    }
+  })
   .catch((error) => {
     console.log('Error: ', error)
   })

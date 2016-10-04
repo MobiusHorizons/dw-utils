@@ -4,6 +4,7 @@ function clean(config){
   var utils = require('./utils.js')
   var fs = require('fs')
   var dwServer = require('dw-webdav')
+  var activate = require('./activate');
 
   var host       = config.hostname
   var version    = config.version
@@ -76,6 +77,13 @@ function clean(config){
     return Promise.all(wait)
   })
   .then(done)
+  .then(() => {
+    if (config.activate){
+      process.stdout.write('Activating version:       ... ')
+      return activate.activate(config,version)
+      .then(done)
+    }
+  })
   .catch((error) => {
     console.log('Error: ', error)
   })

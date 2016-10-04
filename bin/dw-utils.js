@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 'use strict'
+var activate        = require('../activate')
 var clean           = require('../clean')
 var upload          = require('../upload')
 var watch           = require('../watch.js')
@@ -32,10 +33,11 @@ var copts = cli.parse({
   username   : ['u', 'Username for WebDav (Same as Business Manager)', 'string'],
   cartridges : ['C', 'Path to Cartridges from project root (Default is cartridges)', 'path'],
   save       : [false, 'Save settings for future use', 'bool'],
+  activate   : ['a', 'Activate selected version', 'bool'],
   prompt     : ['p', 'Prompt for password', 'bool'],
   stability  : ['s', 'Stability theshold in ms for file watching', 'number',  /^win/.test(process.platform)?500:100],
   interval   : ['i', 'Polling interval (in seconds) for log watching', 'number', 5], 
-}, ['clean', 'upload-version', 'init', 'watch', 'log'])
+}, ['activate', 'clean', 'upload-version', 'init', 'watch', 'log'])
 
 
 function usage(flag){
@@ -68,7 +70,12 @@ if (cli.command == 'init'){
   switch(cli.command){ // command specific arguments
   case 'upload-version':
     opts.zipfile = arg() || usage('zip file to upload')
+  case 'clean': // no break, so this is an argument for both upload and clean;
+    opts.activate = copts.activate;
     break
+  case 'activate':
+    opts.version = arg() || usage('version to activate')
+    break;
   case 'log':
     opts.level = arg()
     opts.interval = copts.interval * 1000
@@ -94,6 +101,9 @@ if (cli.command == 'init'){
     opts.stabilityThreshold = copts.stability
 
     switch (cli.command){
+    case 'activate':
+      activate(opts)
+      break;
     case 'clean':
       clean(opts)
       break
