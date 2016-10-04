@@ -67,11 +67,12 @@ function zipFiles(files, local_base, remote_base, server){
 
     zipfile.outputStream.pipe(server.upload_stream(tempzip))
     .on('end', (code) => {
-      //console.log('Got End:', code, ' \n');
       resolve(tempzip)
     })
     .on('error', (err) => {
-      //console.log('Got Error: ', err,'\n');
+      reject(err)
+    })
+    zipfile.on('error', (err) => {
       reject(err)
     })
   })
