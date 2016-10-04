@@ -3,7 +3,33 @@ var
   dwServer = require('dw-webdav'),
   read     = require('read')
 
+if (!process.stdin.isTTY){
+  // readline won't work properly, just read lines, and warn user that passwords will be in the clear;
+  read = (config, cb) => {
+    let input = config.input || process.stdin
+    let output = config.output || process.stdout
+    let prompt = config.prompt
 
+    let dataCB = (data) => {
+      input.removeListener('data',dataCB) // remove listener;
+      // remove trailing newline;
+      data = data.trim();
+      if (!data.length){
+        data = config.default
+      }
+      cb(null, data)
+    }
+
+    if (config.silent){
+      console.log('WARNING: the following field will not be hidden')
+    }
+    output.write(`${prompt} ` + (config['default'] ? `(${config.default}) ` : ''))
+
+    input.on('data', dataCB);
+    input.resume();
+    input.setEncoding('utf8');
+  }
+}
 function getHostname(config){
   return new Promise((resolve, reject) => {
     read({
@@ -41,7 +67,7 @@ function getPassword(config){
     read({
       'terminal': true,
       'silent'  : true,
-      'replace' : '*',
+      'replace' : '\u2022',
       'prompt'  : 'Password:',
     },(err, value) => {
       if (err){
@@ -96,8 +122,10 @@ function init(config){
     .then(getUsername)
     .then(getPassword)
     .then((config) => {
+      process.stdout.write('Checking Credentials ... ');
       var server = new dwServer(config.hostname, config.username, config.password)
       return server.auth().then(() => {
+        console.log('Authenticated!');
         return config
       })
     })

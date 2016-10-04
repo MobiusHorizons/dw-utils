@@ -284,7 +284,7 @@ function squeeze(value){
   // Fit input to console;
   let style = chalkStyle(value);
   let width = process.stdout.columns;
-  if (width && width > 0 && width < length(value)){
+  if (process.stdout.isTTY && width && width > 0 && width < length(value)){
     // do the squeezing
     for (let i = 0; length(value) > width && i < lowPriority.length; i++){
       let r = lowPriority[i];

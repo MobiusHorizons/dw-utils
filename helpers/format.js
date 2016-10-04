@@ -7,7 +7,6 @@ function sep(name){
   return chalk.red(
     center('<','=', (`[ ${chalk.gray.underline(name)} ]`), '>') + '\n'
   )
-  //return chalk.red('<' + '='.repeat(process.stdout.columns - 2) + '>\n')
 }
 
 function firstline(line){
@@ -26,7 +25,7 @@ var stateRegexes = {
 
 function center(start, fill, title, end){
   let titleLength = chalk.stripColor(title).length;
-  let width = process.stdout.columns;
+  let width = process.stdout.isTTY? process.stdout.columns : 80;
   let leftFill = (width - titleLength)/2 - chalk.stripColor(start).length;
   let rightFill = Math.ceil((width - titleLength)/2) - chalk.stripColor(end).length;
   return `${start}${fill.repeat(leftFill)}${title}${fill.repeat(rightFill)}${end}`;
