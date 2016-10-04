@@ -32,6 +32,20 @@ function watch(config){
     })
 
     utils.zipFiles(files, cartridges, version, server)
+    .catch((error) => {
+      out(chalk.red(`[x] Bulk updating ${zip_files.length} items: Zip Error re-trying`), line)      
+      return utils.zipFiles(files, cartridges, version, server)
+    })
+    .catch((error) => {
+      out(chalk.red(`[x] Bulk updating ${zip_files.length} items: Zip Error, skipping`), line)      
+      for (var i = 0; i < zip_files.length; i++){
+        var file = zip_files[i]
+        let failure = chalk.red(chalk.stripColor(file[2].replace('[*]', '[x]')));
+        out(failure, file[3])
+      }
+      uploading = false
+      process_queue()
+    })
     .then((temp) => {
       out(chalk.yellow(`[ ] Bulk updating ${zip_files.length} items: Unzipping...`), line)
       return server.unzip(temp).then(() => {
@@ -56,6 +70,8 @@ function watch(config){
         let failure = chalk.red(chalk.stripColor(file[2].replace('[*]', '[x]')));
         out(failure, file[3])
       }
+      uploading = false
+      process_queue()
     })
     .then(() => {
       uploading = false
