@@ -9,6 +9,7 @@ The binary provides the following commands.
 
 | Command                              | Description                               |
 | ---------------------                | :---------------------------------------- |
+| `dw-utils activate version`          | Activate the codeversion `version`        |
 | `dw-utils clean`                     | Equivalant to a project clean in eclipse  |
 | `dw-utils [upload | upload-version]` | Upload a zipped code version to a sandbox |
 | `dw-utils init`                      | Interactively enter configuation options  |
@@ -32,12 +33,21 @@ The following flags are recognized
 | -u, --username   | Username for WebDav (Same as Business Manager)                       |
 | -C, --cartridges | Path to Cartridges from project root (Default is 'cartridges')       |
 | --save           | Save settings for future use                                         |
+| -a --activate    | Activates the version after a `clean` or an `upload-version`         |
 | -S, --stability  | Length of time the file's size should stay the same before uploading |
 | -p, --prompt     | Prompt for password                                                  |
 | -h, --help       | Display help and usage details                                       |
 
 
 # Command Details
+
+##
+> **Usage:** `dw-utils artivate version`
+
+This command activates the version passed on the command line. Note that it requires a version to be passed in. If you
+wish to activate the current version at the end of a `clean` or an `upload-version`, that can be accomplished by means
+of the `-a | --activate` flag
+
 
 ## Clean
 
