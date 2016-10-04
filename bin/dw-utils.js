@@ -53,6 +53,10 @@ function arg(){
 if (cli.command == 'init'){
   prompt.init(opts).then((config) => {
     fs.writeFileSync(path.join(root, 'dw.json'), JSON.stringify(config, null, 2))
+    if (!process.stdin.isTTY){
+      console.log('Config saved, press any key to continue');
+      process.exit();
+    }
   })
 } else {
 
