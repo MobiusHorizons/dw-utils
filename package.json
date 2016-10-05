@@ -1,13 +1,16 @@
 {
   "name": "dw-utils",
-  "version": "1.3.91",
+  "version": "1.3.92",
   "description": "Code Upload utilities for Demandware projects",
   "main": "bin/dw-utils.js",
   "bin": {
     "dw-utils": "./bin/dw-utils.js"
   },
+  "man" : "dw-utils.1",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "remark Readme.md --use man --output dw-utils.1",
+    "prepublish" : "npm run docs"
   },
   "author": "paul.martin@cqlcorp.com",
   "license": "ISC",
@@ -28,5 +31,9 @@
     "slice-ansi": "0.0.4",
     "watch": "^0.19.1",
     "yazl": "^2.4.1"
+  },
+  "devDependencies": {
+    "remark-cli": "^2.0.0",
+    "remark-man": "^4.0.0"
   }
 }

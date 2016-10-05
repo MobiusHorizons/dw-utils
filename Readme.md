@@ -1,8 +1,11 @@
 [![Analytics](https://ga-beacon.appspot.com/UA-66081238-2/github/readme)](https://github.com/igrigorik/ga-beacon)
-<!--[![Analytics](https://ga-beacon.appspot.com/UA-66081238-2/npm/readme)](https://github.com/igrigorik/ga-beacon)-->
-#Demandware Utilities
+# dw-utils(1) -- Demandware Utilities
 
 This package provides a command line utility `dw-utils` for managing code on Demandware sites.
+
+## Synopsis
+
+`dw-utils` \[ `init` | `watch` | `clean` \[_path_\] \[`-a` | `--activate`\] \] | `activate` _version_ | `log` \[_level_] | (`upload` | `upload-version`) _zip_ \[`-a` | `--activate`\] \] \[_flags_\]
 
 ## Commands
 The binary provides the following commands.
@@ -11,10 +14,10 @@ The binary provides the following commands.
 | ---------------------                | :---------------------------------------- |
 | `dw-utils activate version`          | Activate the codeversion `version`        |
 | `dw-utils clean [path]`              | Equivalant to a project clean in eclipse  |
-| `dw-utils [upload | upload-version]` | Upload a zipped code version to a sandbox |
 | `dw-utils init`                      | Interactively enter configuation options  |
-| `dw-utils watch`                     | Watch cartridge path and upload changes   |
 | `dw-utils log [level]`               | Poll the log file for updates             |
+| `dw-utils [upload | upload-version]` | Upload a zipped code version to a sandbox |
+| `dw-utils watch`                     | Watch cartridge path and upload changes   |
 
 ## Credentials
 
@@ -41,8 +44,8 @@ The following flags are recognized
 
 # Command Details
 
-##
-> **Usage:** `dw-utils artivate version`
+## Activate
+> **Usage:** `dw-utils activate version`
 
 This command activates the version passed on the command line. Note that it requires a version to be passed in. If you
 wish to activate the current version at the end of a `clean` or an `upload-version`, that can be accomplished by means

@@ -1,0 +1,103 @@
+.TH "DW-UTILS" "1" "October 2016" "" ""
+.SH "NAME"
+\fBdw-utils\fR - Demandware Utilities
+.P
+\fB\fBAnalytics\fR \fI\(lahttps://ga-beacon.appspot.com/UA-66081238-2/github/readme\(ra\fR\fR \fI\(lahttps://github.com/igrigorik/ga-beacon\(ra\fR
+.P
+This package provides a command line utility \fBdw-utils\fR for managing code on Demandware sites.
+.SS "Synopsis"
+.P
+\fBdw-utils\fR \[lB] \fBinit\fR | \fBwatch\fR | \fBclean\fR \[lB]\fIpath\fR\[rB] \[lB]\fB-a\fR | \fB--activate\fR\[rB] \[rB] | \fBactivate\fR \fIversion\fR | \fBlog\fR \[lB]\fIlevel\fR\[rB] | (\fBupload\fR | \fBupload-version\fR) \fIzip\fR \[lB]\fB-a\fR | \fB--activate\fR\[rB] \[rB] \[lB]\fIflags\fR\[rB]
+.SS "Commands"
+.P
+The binary provides the following commands.
+.TS
+tab(@) allbox;
+cb cb
+l l .
+Command@Description
+\fBdw-utils activate version\fR@Activate the codeversion \fBversion\fR
+\fBdw-utils clean \[lB]path\[rB]\fR@Equivalant to a project clean in eclipse
+\fBdw-utils init\fR@Interactively enter configuation options
+\fBdw-utils log \[lB]level\[rB]\fR@Poll the log file for updates
+\fBdw-utils \[lB]upload | upload-version\[rB]\fR@Upload a zipped code version to a sandbox
+\fBdw-utils watch\fR@Watch cartridge path and upload changes
+.TE
+.SS "Credentials"
+.P
+Credentials are stored in a file called \fBdw.json\fR in the root of the project. dw-utils will create such a file if called with the \fB--save\fR option, or interactively by calling \fBdw-utils init\fR. 
+.SS "Flags"
+.P
+The following flags are recognized
+.TS
+tab(@) allbox;
+cb cb
+l l .
+Flag@Description
+-V, --version@Code version to upload to (defaults to 'version1')
+-H, --hostname@Hostname of remote DW server
+-u, --username@Username for WebDav (Same as Business Manager)
+-C, --cartridges@Path to Cartridges from project root (Default is 'cartridges')
+--save@Save settings for future use
+-a --activate@Activates the version after a \fBclean\fR or an \fBupload-version\fR
+-S, --stability@Length of time the file's size should stay the same before uploading
+-p, --prompt@Prompt for password
+-h, --help@Display help and usage details
+.TE
+.SH "COMMAND DETAILS"
+.SS "Activate"
+.RS 0
+.P
+\fBUsage:\fR \fBdw-utils activate version\fR
+.RE 0
+
+.P
+This command activates the version passed on the command line. Note that it requires a version to be passed in. If you wish to activate the current version at the end of a \fBclean\fR or an \fBupload-version\fR, that can be accomplished by means of the \fB-a | --activate\fR flag
+.SS "Clean"
+.RS 0
+.P
+\fBUsage:\fR \fBdw-utils clean \[lB]path\[rB]\fR
+.RE 0
+
+.P
+This is Equivalant to a project clean that you would run in eclipse. It zips up all local files, and uploads them to the dw instance specified on the command line with \fB-H\fR, or in \fBdw.json\fR if it was previously set up. then all the old code in the apropriate version is deleted, and the zip file is unzipped. This ensures that the files on the remote are exactly the same as the ones on the client.
+.P
+The optional \fBpath\fR is the subdirectory of the \fBcartridges\fR directory you wish to upload.
+.SS "Upload"
+.RS 0
+.P
+\fBUsage:\fR \fBdw-utils upload \[lB]version.zip\[rB]\fR
+.RE 0
+
+.P
+This tool can also be invoked as \fBupload-version\fR which is longer but slightly more self-explanatory.
+.P
+Upload a code version zip from another instance. In Business Manager, under \fBCode Deployment\fR click on the version you want to download, and click the \fBDownload\fR link. This will download a zip file of the code for that version which can be uploaded using this tool.
+.SS "Init"
+.RS 0
+.P
+\fBUsage:\fR \fBdw-utils init\fR
+.RE 0
+
+.P
+Interactively enters configuration for the repository and stores it in \fBdw.json\fR. Make sure to ignore this file in source controll.
+.SS "Watch"
+.RS 0
+.P
+\fBUsage:\fR \fBdw-utils watch\fR
+.RE 0
+
+.P
+Watch for changes to files in the \fBcartridge\fR directory and upload them. This uploader will bulk upload files if there are more than 5 waiting to be uploaded, which results in very fast uploads even when there are a lot of changes. 
+.P
+\fBNOTE:\fR if you have stability issues or encounter a lot of errors, try upping the \fB--stability\fR flag.
+.SS "Log"
+.RS 0
+.P
+\fBUsage:\fR \fBdw-utils log \[lB]level\[rB]\fR
+.RE 0
+
+.P
+\fBlevel\fR specifies the logging level, usually one of \fB\[lB]debug,warn,eror,fatal\[rB]\fR, but will work with any custom error logging as well. Upon startup, the command will automatically find the most recently updated log file with a name matching the \fBlevel\fR. The log file is polled at the interval set with \fB-i --interval\fR with a default of 5s. 
+.P
+\fBNOTE:\fR this will not show changes to log files created while \fBdw-utils\fR was running, so if the log file your are looking at rolls over to a new date, or if there is no log yet for the current day, it will not find it while running. You will have to exit out of the \fBdw-utils log\fR and restart it to catch the new file.
