@@ -72,6 +72,7 @@ if (cli.command == 'init'){
     opts.zipfile = arg() || usage('zip file to upload')
   case 'clean': // no break, so this is an argument for both upload and clean;
     opts.activate = copts.activate;
+    opts.uploadPath = arg();
     break
   case 'activate':
     opts.version = arg() || usage('version to activate')

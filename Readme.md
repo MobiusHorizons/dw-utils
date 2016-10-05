@@ -10,7 +10,7 @@ The binary provides the following commands.
 | Command                              | Description                               |
 | ---------------------                | :---------------------------------------- |
 | `dw-utils activate version`          | Activate the codeversion `version`        |
-| `dw-utils clean`                     | Equivalant to a project clean in eclipse  |
+| `dw-utils clean [path]`              | Equivalant to a project clean in eclipse  |
 | `dw-utils [upload | upload-version]` | Upload a zipped code version to a sandbox |
 | `dw-utils init`                      | Interactively enter configuation options  |
 | `dw-utils watch`                     | Watch cartridge path and upload changes   |
@@ -51,12 +51,14 @@ of the `-a | --activate` flag
 
 ## Clean
 
-> **Usage:** `dw-utils clean`
+> **Usage:** `dw-utils clean [path]`
 
 This is Equivalant to a project clean that you would run in eclipse. It zips up all local files, and uploads them to 
 the dw instance specified on the command line with `-H`, or in `dw.json` if it was previously set up. then all the old
 code in the apropriate version is deleted, and the zip file is unzipped. This ensures that the files on the remote
 are exactly the same as the ones on the client.
+
+The optional `path` is the subdirectory of the `cartridges` directory you wish to upload.
 
 ## Upload 
 

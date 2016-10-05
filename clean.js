@@ -3,6 +3,7 @@ function clean(config){
 
   var utils = require('./utils.js')
   var fs = require('fs')
+  var path = require('path');
   var dwServer = require('dw-webdav')
   var activate = require('./activate');
 
@@ -10,7 +11,11 @@ function clean(config){
   var version    = config.version
   var username   = config.username
   var cartridges = config.cartridges
+  var uploadPath = config.uploadPath || cartridges
   var password   = config.password
+
+  var cartridgeRelativePath = path.join(version, path.relative(cartridges, uploadPath));
+  console.log(uploadPath, cartridges, cartridgeRelativePath);
 
   var server = new dwServer(host, username, password)
 
@@ -41,7 +46,7 @@ function clean(config){
   .catch(authError)
   .then(() => {
     process.stdout.write('Zipping local files:      ... ')
-    return utils.zip(cartridges, version, version  + '.zip')
+    return utils.zip(uploadPath, cartridgeRelativePath, version  + '.zip')
   })
   .then(done)
   .then(() => {
@@ -53,7 +58,7 @@ function clean(config){
   .then(done)
   .then(() => {
     process.stdout.write('Deleting old files:       ... ')
-    return server.delete(version)
+    return server.delete(cartridgeRelativePath)
   })
   .then(done)
   .then(() => {
