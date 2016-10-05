@@ -14,7 +14,10 @@ function clean(config){
   var uploadPath = config.uploadPath || cartridges
   var password   = config.password
 
-  var cartridgeRelativePath = path.join(version, path.relative(cartridges, uploadPath));
+  var cartridgeRelativePath = version;
+  if (cartridges != uploadPath) {
+    cartridgeRelativePath = path.join(version, path.relative(cartridges, uploadPath));
+  }
 
   var server = new dwServer(host, username, password)
 
