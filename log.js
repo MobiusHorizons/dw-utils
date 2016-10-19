@@ -13,7 +13,7 @@ function log(config){
   let server = new dwServer(host, username, password)
   
   let gotEntries = server.ls('../Logs');
-  let regex = new RegExp(`^${level}-blade`)
+  let regex = new RegExp(`^(custom)?${level}-blade`)
   let seenLevels = {};
 
   let animateOut = new AnimateChunk({animationDuration : 500});
