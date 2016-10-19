@@ -8,7 +8,7 @@ function log(config){
   let host       = config.hostname
   let username   = config.username
   let password   = config.password
-  let level      = config.level || 'error'
+  let level      = config.level || '(custom)?error'
   
   let server = new dwServer(host, username, password)
   
