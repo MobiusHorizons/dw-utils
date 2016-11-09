@@ -14,6 +14,7 @@ function zip(cartridges, metadataPath, outfile){
 
     //glob(cartridges + '/**/*(static|scripts|templates|forms|pipelines)/**', {
     glob(cartridges + '/**', {
+      follow: true,
       nosort: true,
       nodir: true
     },
