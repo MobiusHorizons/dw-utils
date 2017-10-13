@@ -22,7 +22,7 @@ The binary provides the following commands.
 ## Credentials
 
 Credentials are stored in a file called `dw.json` in the root of the project.
-dw-utils will create such a file if called with the `--save` option, or interactively by calling `dw-utils init`. 
+dw-utils will create such a file if called with the `--save` option, or interactively by calling `dw-utils init`.
 
 
 ## Flags
@@ -38,6 +38,7 @@ The following flags are recognized
 | --save           | Save settings for future use                                         |
 | -a --activate    | Activates the version after a `clean` or an `upload-version`         |
 | -S, --stability  | Length of time the file's size should stay the same before uploading |
+| -f, --follow     | Display only new changes for `log` compare to `tail -f`              |
 | -p, --prompt     | Prompt for password                                                  |
 | -h, --help       | Display help and usage details                                       |
 
@@ -56,20 +57,20 @@ of the `-a | --activate` flag
 
 > **Usage:** `dw-utils clean [path]`
 
-This is Equivalant to a project clean that you would run in eclipse. It zips up all local files, and uploads them to 
+This is Equivalant to a project clean that you would run in eclipse. It zips up all local files, and uploads them to
 the dw instance specified on the command line with `-H`, or in `dw.json` if it was previously set up. then all the old
 code in the apropriate version is deleted, and the zip file is unzipped. This ensures that the files on the remote
 are exactly the same as the ones on the client.
 
 The optional `path` is the subdirectory of the `cartridges` directory you wish to upload.
 
-## Upload 
+## Upload
 
 > **Usage:** `dw-utils upload [version.zip]`
 
 This tool can also be invoked as `upload-version` which is longer but slightly more self-explanatory.
 
-Upload a code version zip from another instance. In Business Manager, under **Code Deployment** click on the version 
+Upload a code version zip from another instance. In Business Manager, under **Code Deployment** click on the version
 you want to download, and click the **Download** link. This will download a zip file of the code for that version
 which can be uploaded using this tool.
 
@@ -85,9 +86,9 @@ source controll.
 
 > **Usage:** `dw-utils watch`
 
-Watch for changes to files in the `cartridge` directory and upload them. 
+Watch for changes to files in the `cartridge` directory and upload them.
 This uploader will bulk upload files if there are more than 5 waiting to be uploaded, which results in very fast uploads
-even when there are a lot of changes. 
+even when there are a lot of changes.
 
 **NOTE:** if you have stability issues or encounter a lot of errors, try upping the `--stability` flag.
 
@@ -96,7 +97,9 @@ even when there are a lot of changes.
 
 `level` specifies the logging level, usually one of `[debug,warn,eror,fatal]`, but will work with any custom error
 logging as well. Upon startup, the command will automatically find the most recently updated log file with a name
-matching the `level`. The log file is polled at the interval set with `-i --interval` with a default of 5s. 
+matching the `level`. The log file is polled at the interval set with `-i --interval` with a default of 5s.
+
+Use `--follow | -f` to display only changes that happen after the logging starts.
 
 **NOTE:** this will not show changes to log files created while `dw-utils` was running, so if the log file your are looking at
 rolls over to a new date, or if there is no log yet for the current day, it will not find it while running. You will
