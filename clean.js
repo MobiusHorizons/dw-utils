@@ -1,9 +1,10 @@
 function clean(config){
   'use strict'
 
-  var utils = require('./utils.js')
-  var fs = require('fs')
-  var path = require('path');
+  var utils    = require('./utils.js')
+  var fs       = require('fs')
+  var path     = require('path');
+  var branch   = require('git-branch');
   var dwServer = require('dw-webdav')
   var activate = require('./activate');
 
@@ -35,7 +36,7 @@ function clean(config){
       process.stdout.write('\r\x1b[2KUploading:                ... ' + p.percentage.toFixed(1) + '% ' + eta)
     }
   }
-  
+
   function authError(){
     console.log('Invalid Username or Password')
     return config.prompt(config).then((config) =>{
@@ -46,6 +47,15 @@ function clean(config){
 
   server.auth()
   .catch(authError)
+  .then(() => {
+    try {
+      let branchName = branch.sync();
+      console.log('[ Project Clean on branch \'' + branchName + '\': ' + (new Date()).toLocaleString() + ' ]');
+    } catch (e){
+      console.log(e);
+      console.log('[ Project Clean: ' + (new Date()).toLocaleString() + ' ]');
+    }
+  })
   .then(() => {
     process.stdout.write('Zipping local files:      ... ')
     return utils.zip(uploadPath, cartridgeRelativePath, version  + '.zip')
@@ -90,6 +100,7 @@ function clean(config){
       return activate.activate(config,version)
       .then(done)
     }
+    return true;
   })
   .catch((error) => {
     console.log('Error: ', error)
