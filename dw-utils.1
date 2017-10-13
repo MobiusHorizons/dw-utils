@@ -25,7 +25,7 @@ Command@Description
 .TE
 .SS "Credentials"
 .P
-Credentials are stored in a file called \fBdw.json\fR in the root of the project. dw-utils will create such a file if called with the \fB--save\fR option, or interactively by calling \fBdw-utils init\fR. 
+Credentials are stored in a file called \fBdw.json\fR in the root of the project. dw-utils will create such a file if called with the \fB--save\fR option, or interactively by calling \fBdw-utils init\fR.
 .SS "Flags"
 .P
 The following flags are recognized
@@ -41,6 +41,7 @@ Flag@Description
 --save@Save settings for future use
 -a --activate@Activates the version after a \fBclean\fR or an \fBupload-version\fR
 -S, --stability@Length of time the file's size should stay the same before uploading
+-f, --follow@Display only new changes for \fBlog\fR compare to \fBtail -f\fR
 -p, --prompt@Prompt for password
 -h, --help@Display help and usage details
 .TE
@@ -88,7 +89,7 @@ Interactively enters configuration for the repository and stores it in \fBdw.jso
 .RE 0
 
 .P
-Watch for changes to files in the \fBcartridge\fR directory and upload them. This uploader will bulk upload files if there are more than 5 waiting to be uploaded, which results in very fast uploads even when there are a lot of changes. 
+Watch for changes to files in the \fBcartridge\fR directory and upload them. This uploader will bulk upload files if there are more than 5 waiting to be uploaded, which results in very fast uploads even when there are a lot of changes.
 .P
 \fBNOTE:\fR if you have stability issues or encounter a lot of errors, try upping the \fB--stability\fR flag.
 .SS "Log"
@@ -98,6 +99,8 @@ Watch for changes to files in the \fBcartridge\fR directory and upload them. Thi
 .RE 0
 
 .P
-\fBlevel\fR specifies the logging level, usually one of \fB\[lB]debug,warn,eror,fatal\[rB]\fR, but will work with any custom error logging as well. Upon startup, the command will automatically find the most recently updated log file with a name matching the \fBlevel\fR. The log file is polled at the interval set with \fB-i --interval\fR with a default of 5s. 
+\fBlevel\fR specifies the logging level, usually one of \fB\[lB]debug,warn,eror,fatal\[rB]\fR, but will work with any custom error logging as well. Upon startup, the command will automatically find the most recently updated log file with a name matching the \fBlevel\fR. The log file is polled at the interval set with \fB-i --interval\fR with a default of 5s.
+.P
+Use \fB--follow | -f\fR to display only changes that happen after the logging starts.
 .P
 \fBNOTE:\fR this will not show changes to log files created while \fBdw-utils\fR was running, so if the log file your are looking at rolls over to a new date, or if there is no log yet for the current day, it will not find it while running. You will have to exit out of the \fBdw-utils log\fR and restart it to catch the new file.

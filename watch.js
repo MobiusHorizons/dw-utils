@@ -1,21 +1,24 @@
 'use strict'
 var
-  chalk    = require('chalk'),
-  chokidar = require('chokidar'),
-  dwServer = require('dw-webdav'),
-  path     = require('path'),
-  sliceAnsi= require('slice-ansi'),
-  utils    = require('./utils')
+  chalk       = require('chalk'),
+  chalkStyles = require('ansi-styles'),
+  hasColor    = require('has-ansi'),
+  stripColor  = require('strip-ansi'),
+  chokidar    = require('chokidar'),
+  dwServer    = require('dw-webdav'),
+  path        = require('path'),
+  sliceAnsi   = require('slice-ansi'),
+  utils       = require('./utils')
 
 function watch(config){
-  
-  
+
+
   var host       = config.hostname
   var version    = config.version
   var username   = config.username
   var cartridges = config.cartridges
   var password   = config.password
-  
+
 
   var server = new dwServer(host, 'dw-utils', username, password)
 
@@ -33,14 +36,14 @@ function watch(config){
 
     utils.zipFiles(files, cartridges, version, server)
     .catch((error) => {
-      out(chalk.red(`[x] Bulk updating ${zip_files.length} items: Zip Error re-trying`), line)      
+      out(chalk.red(`[x] Bulk updating ${zip_files.length} items: Zip Error re-trying`), line)
       return utils.zipFiles(files, cartridges, version, server)
     })
     .catch((error) => {
-      out(chalk.red(`[x] Bulk updating ${zip_files.length} items: Zip Error, skipping`), line)      
+      out(chalk.red(`[x] Bulk updating ${zip_files.length} items: Zip Error, skipping`), line)
       for (var i = 0; i < zip_files.length; i++){
         var file = zip_files[i]
-        let failure = chalk.red(chalk.stripColor(file[2].replace('[*]', '[x]')));
+        let failure = chalk.red(stripColor(file[2].replace('[*]', '[x]')));
         out(failure, file[3])
       }
       uploading = false
@@ -64,10 +67,10 @@ function watch(config){
       }
     })
     .catch(error => {
-      out.chalk.red(`[x] Bulk updating ${zip_files.length} items: ${error.code}`, line)      
+      out.chalk.red(`[x] Bulk updating ${zip_files.length} items: ${error.code}`, line)
       for (var i = 0; i < zip_files.length; i++){
         var file = zip_files[i]
-        let failure = chalk.red(chalk.stripColor(file[2].replace('[*]', '[x]')));
+        let failure = chalk.red(stripColor(file[2].replace('[*]', '[x]')));
         out(failure, file[3])
       }
       uploading = false
@@ -112,7 +115,7 @@ function watch(config){
       out(success,line)
     })
     .catch(error => {
-      let failure = chalk.red(chalk.stripColor(success.replace(/\[\*\]/, "[x]")))
+      let failure = chalk.red(stripColor(success.replace(/\[\*\]/, "[x]")))
       out(failure, line)
     })
     .then(() => {
@@ -198,7 +201,7 @@ const lowPriority = [
   new RegExp('/(default)/'),
   new RegExp('/(static)/'),
   new RegExp('(\.generated\.)'),
-  new RegExp('( was )'), 
+  new RegExp('( was )'),
   new RegExp('\s(\w*_)'),
   new RegExp('ch(anged)'),
   new RegExp('del(eted)'),
@@ -211,29 +214,29 @@ const elipsis = chalk.gray('\u2026');
 function chalkStyle(value){
   // return the chalk style function for the value
   const codes = [
-    chalk.styles.red.open,
-    chalk.styles.green.open,
-    chalk.styles.yellow.open,
-    chalk.styles.blue.open,
-    chalk.styles.magenta.open,
-    chalk.styles.cyan.open,
-    chalk.styles.white.open,
-    chalk.styles.gray.open,
-    chalk.styles.black.open,
-    chalk.styles.bold.open,
-    chalk.styles.dim.open,
-    chalk.styles.italic.open,
-    chalk.styles.underline.open,
-    chalk.styles.inverse.open,
-    chalk.styles.strikethrough.open,
-    chalk.styles.bgRed.open,
-    chalk.styles.bgGreen.open,
-    chalk.styles.bgYellow.open,
-    chalk.styles.bgBlue.open,
-    chalk.styles.bgMagenta.open,
-    chalk.styles.bgCyan.open,
-    chalk.styles.bgWhite.open,
-    chalk.styles.bgBlack.open,
+    chalkStyles.red.open,
+    chalkStyles.green.open,
+    chalkStyles.yellow.open,
+    chalkStyles.blue.open,
+    chalkStyles.magenta.open,
+    chalkStyles.cyan.open,
+    chalkStyles.white.open,
+    chalkStyles.gray.open,
+    chalkStyles.black.open,
+    chalkStyles.bold.open,
+    chalkStyles.dim.open,
+    chalkStyles.italic.open,
+    chalkStyles.underline.open,
+    chalkStyles.inverse.open,
+    chalkStyles.strikethrough.open,
+    chalkStyles.bgRed.open,
+    chalkStyles.bgGreen.open,
+    chalkStyles.bgYellow.open,
+    chalkStyles.bgBlue.open,
+    chalkStyles.bgMagenta.open,
+    chalkStyles.bgCyan.open,
+    chalkStyles.bgWhite.open,
+    chalkStyles.bgBlack.open,
   ];
   const styles = [
     'red',
@@ -262,8 +265,8 @@ function chalkStyle(value){
   ];
 
   var style = chalk.reset;
-  if (chalk.hasColor(value)){
-    let colorless = chalk.stripColor(value);
+  if (hasColor(value)){
+    let colorless = stripColor(value);
     var open = value.substring(0, value.indexOf(colorless));
 
     for (let i = 0; i < codes.length; i++){
@@ -277,7 +280,7 @@ function chalkStyle(value){
 }
 
 function length(value){
-  return chalk.stripColor(value).length;
+  return stripColor(value).length;
 }
 
 function squeeze(value){
@@ -293,7 +296,7 @@ function squeeze(value){
         let toRemove = length(value) - width;
         let replacement = squeezeMiddle(m[1], toRemove);
         value = style(
-          value.substring(0, value.indexOf(m[1], m.index)) + 
+          value.substring(0, value.indexOf(m[1], m.index)) +
           replacement.start +
           elipsis +
           replacement.end +
