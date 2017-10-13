@@ -3,15 +3,16 @@ var dwServer = require('dw-webdav')
 var Tail = require('./helpers/Tail');
 var formatter = require('./helpers/format.js')
 var AnimateChunk = require('./helpers/aninateChunk.js')
+var chalk = require('chalk')
 
 function log(config){
   let host       = config.hostname
   let username   = config.username
   let password   = config.password
   let level      = config.level || '(custom)?error'
-  
+
   let server = new dwServer(host, 'dw-utils', username, password)
-  
+
   let gotEntries = server.ls('../Logs');
   let regex = new RegExp(`^${level}-blade`)
   let seenLevels = {};
@@ -40,12 +41,25 @@ function log(config){
     })
 
 
+    let title = newest_logs
+      .map(log => chalk.white.underline(log.propstat.prop.displayname.replace(/-blade.*-/, "-")))
+      .join(', ');
+
+    console.log(chalk.yellow(
+      formatter.center('[','-', (`| ${title} |`), ']')
+    ));
+
     for (let i = 0; i < newest_logs.length; i++){
-      let logFile = new Tail({poll_interval: config.interval}, server, '../Logs/' + newest_logs[i].propstat.prop.displayname)
+      let logFile = new Tail({
+        poll_interval: config.interval,
+        follow       : config.follow,
+      }, server, '../Logs/' + newest_logs[i].propstat.prop.displayname)
+
       logFile
       .pipe(new formatter({name :newest_logs[i].propstat.prop.displayname}))
       .pipe(animateOut)
     }
+
   })
 }
 

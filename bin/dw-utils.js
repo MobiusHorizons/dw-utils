@@ -13,7 +13,7 @@ var path            = require('path')
 
 var root = findProjectRoot(process.cwd(), {
   maxDepth: 12,
-  markers : ['.git', '.hg', 'project.json']
+  markers : ['dw.json', '.git', '.hg', 'package.json']
 })
 
 //cli.debug('project root: ' + root)
@@ -33,12 +33,13 @@ var copts = cli.parse({
   username   : ['u', 'Username for WebDav (Same as Business Manager)', 'string'],
   cartridges : ['C', 'Path to Cartridges from project root (Default is cartridges)', 'path'],
   save       : [false, 'Save settings for future use', 'bool'],
-  activate   : ['a', 'Activate selected version', 'bool'],
+  activate   : ['a', '[clean] Activate selected version', 'bool'],
   prompt     : ['p', 'Prompt for password', 'bool'],
   stability  : ['s', 'Stability theshold in ms for file watching', 'number',  /^win/.test(process.platform)?500:100],
-  interval   : ['i', 'Polling interval (in seconds) for log watching', 'number', 5], 
+  interval   : ['i', '[log] Polling interval (in seconds) for log watching', 'number', 5],
+  follow     : ['f', '[log] Only show new messages', 'bool', opts.follow],
+  all        : [false, '[log] Display all log messages even if follow is set in the `dw.json` file'],
 }, ['activate', 'clean', 'upload-version', 'init', 'watch', 'log'])
-
 
 function usage(flag){
   cli.error('please provide a ' + flag)
@@ -48,7 +49,7 @@ function usage(flag){
 function arg(){
   if (cli.args.length > 0){
     return cli.args.shift()
-  } 
+  }
   return undefined
 }
 
@@ -78,8 +79,9 @@ if (cli.command == 'init'){
     opts.version = arg() || usage('version to activate')
     break;
   case 'log':
-    opts.level = arg()
-    opts.interval = copts.interval * 1000
+    opts.level    = arg()
+    opts.interval = copts.interval * 1000;
+    opts.follow   = copts.all ? false : copts.follow;
     break
   }
 
@@ -96,9 +98,9 @@ if (cli.command == 'init'){
       fs.writeFileSync(path.join(root, 'dw.json'), JSON.stringify(opts, null, 2))
     }
 
-    opts.root = root
-    opts.cartridges = path.join(root, opts.cartridges)
-    opts.prompt = prompt.getPassword
+    opts.root               = root
+    opts.cartridges         = path.join(root, opts.cartridges)
+    opts.prompt             = prompt.getPassword
     opts.stabilityThreshold = copts.stability
 
     switch (cli.command){
@@ -117,7 +119,7 @@ if (cli.command == 'init'){
     case 'log':
       log(opts)
       break
-    default: 
+    default:
       usage('command')
     }
   })

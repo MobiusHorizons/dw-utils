@@ -39,7 +39,7 @@ class DWLogFormatter extends Transform{
     this.lineBuffer = '' // holds partial lines (unlikely)
   }
   match(line){
-    let transition = false; 
+    let transition = false;
     for (let i = 0; i < states.length; i++){
       let state = states[i];
       if (stateRegexes[state].test(line)){
@@ -68,12 +68,12 @@ class DWLogFormatter extends Transform{
   }
   _transform(chunk, encoding, cb){
     let out = "";
-    out += (chalk.magenta(center('[', '-', 
+    out += (chalk.magenta(center('[', '-',
         `| ${chalk.underline((new Date()).toTimeString().substring(0,8))} |`,
     ']') + '\n'))
 
     let lines = (chunk.toString().split('\n'))
-    
+
     for (var i = 0; i < lines.length; i++){
       let line = lines[i];
       out += (this.match(line))
@@ -83,4 +83,5 @@ class DWLogFormatter extends Transform{
   }
 }
 
+DWLogFormatter.center = center;
 module.exports = DWLogFormatter
