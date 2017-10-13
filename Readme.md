@@ -1,6 +1,8 @@
 [![Analytics](https://ga-beacon.appspot.com/UA-66081238-2/github/readme)](https://github.com/igrigorik/ga-beacon)
 # dw-utils(1) -- Demandware Utilities
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/MobiusHorizons/dw-utils.svg)](https://greenkeeper.io/)
+
 This package provides a command line utility `dw-utils` for managing code on Demandware sites.
 
 ## Synopsis
