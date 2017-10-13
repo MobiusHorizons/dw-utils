@@ -11,7 +11,7 @@ function upload(config){
   var zipfile    = config.zipfile
   var version    = path.basename(zipfile)
 
-  var server = new dwServer(host, username, password)
+  var server = new dwServer(host, 'dw-utils', username, password)
 
   var done = () => {
     console.log('done')
@@ -31,8 +31,8 @@ function upload(config){
   
   function authError(){
     console.log('Invalid Username or Password')
-    return config.prompt().then((password) =>{
-      server = new dwServer(host, username, password)
+    return config.prompt().then((password) => {
+      server = new dwServer(host, 'dw-utils', username, password)
       return server.auth()
     }).catch(authError)
   }

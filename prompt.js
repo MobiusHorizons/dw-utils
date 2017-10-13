@@ -123,7 +123,7 @@ function init(config){
     .then(getPassword)
     .then((config) => {
       process.stdout.write('Checking Credentials ... ');
-      var server = new dwServer(config.hostname, config.username, config.password)
+      var server = new dwServer(config.hostname, 'dw-utils', config.username, config.password)
       return server.auth().then(() => {
         console.log('Authenticated!');
         return config

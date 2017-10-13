@@ -19,7 +19,7 @@ function clean(config){
     cartridgeRelativePath = path.join(version, path.relative(cartridges, uploadPath));
   }
 
-  var server = new dwServer(host, username, password)
+  var server = new dwServer(host, 'dw-utils', username, password)
 
   var done = () => {
     console.log('done')
@@ -39,7 +39,7 @@ function clean(config){
   function authError(){
     console.log('Invalid Username or Password')
     return config.prompt(config).then((config) =>{
-      server = new dwServer(config.host, config.username, config.password)
+      server = new dwServer(config.host, 'dw-utils', config.username, config.password)
       return server.auth()
     }).catch(authError)
   }

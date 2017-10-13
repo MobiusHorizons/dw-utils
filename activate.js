@@ -3,10 +3,10 @@
 let versionRegex = new RegExp('([-_\\w\\d]+)/(\\d+)/(\\d+)')
 let dwServer = require('dw-webdav');
 let request = require('request');
-  
+
 function activateVersion(config){
   var version    = config.version
-  
+
   process.stdout.write(`Activating version '${version}' .`)
   let onProgress = () => { process.stdout.write('.') }
   activate(config, version, onProgress).then(() => {
@@ -26,13 +26,16 @@ function activate(config, version, onProgress){
     request({
       method: 'POST',
       url : login_url,
+      headers : {
+        'User-Agent': 'dw-utils',
+      },
       qs  : {
         "LoginForm_Login" : config.username,
         "LoginForm_Password" : config.password,
         "LoginForm_RegistrationDomain" : 'Sites',
       }, jar : jar
     }, (error, response) => {
-      if (error){ 
+      if (error){
         return reject(error)
       }
       resolve();
@@ -42,10 +45,13 @@ function activate(config, version, onProgress){
     return new Promise((resolve, reject) => {
       request({
         url :'https://' + config.hostname + '/on/demandware.store/Sites-Site/default/ViewApplication-DisplayWelcomePage',
+        headers : {
+          'User-Agent': 'dw-utils',
+        },
         jar : jar
       },
       (error, response) => {
-        if (error){ 
+        if (error){
           return reject(error)
         }
         resolve();
@@ -57,12 +63,15 @@ function activate(config, version, onProgress){
       let activate_url = 'https://' + config.hostname + '/on/demandware.store/Sites-Site/default/ViewCodeDeployment-Activate';
       request({
         url : activate_url,
+        headers : {
+          'User-Agent': 'dw-utils',
+        },
         qs : {
           CodeVersionID : version,
         }, jar : jar
       }, (error, response, body) => {
         let successRegex = new RegExp(`Successfully activated version '${config.version}'`)
-        if (error){ 
+        if (error){
           return reject(error)
         } else if (successRegex.test(body)){
           return resolve();

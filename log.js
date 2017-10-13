@@ -10,7 +10,7 @@ function log(config){
   let password   = config.password
   let level      = config.level || '(custom)?error'
   
-  let server = new dwServer(host, username, password)
+  let server = new dwServer(host, 'dw-utils', username, password)
   
   let gotEntries = server.ls('../Logs');
   let regex = new RegExp(`^${level}-blade`)

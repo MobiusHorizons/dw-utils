@@ -17,7 +17,7 @@ function watch(config){
   var password   = config.password
   
 
-  var server = new dwServer(host, username, password)
+  var server = new dwServer(host, 'dw-utils', username, password)
 
   var current_line = 0
   var upload_queue = []

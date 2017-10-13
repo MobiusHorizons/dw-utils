@@ -6,11 +6,11 @@
   "bin": {
     "dw-utils": "./bin/dw-utils.js"
   },
-  "man" : "dw-utils.1",
+  "man": "dw-utils.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "remark Readme.md --use man --output dw-utils.1",
-    "prepublish" : "npm run docs"
+    "prepublish": "npm run docs"
   },
   "author": "paul.martin@cqlcorp.com",
   "license": "ISC",
