@@ -52,7 +52,6 @@ function clean(config){
       let branchName = branch.sync();
       console.log('[ Project Clean on branch \'' + branchName + '\': ' + (new Date()).toLocaleString() + ' ]');
     } catch (e){
-      console.log(e);
       console.log('[ Project Clean: ' + (new Date()).toLocaleString() + ' ]');
     }
   })
