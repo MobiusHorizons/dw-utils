@@ -60,6 +60,7 @@ if (cli.command == 'init'){
       console.log('Config saved, press any key to continue');
       process.exit();
     }
+  }).catch(() => {
   })
 } else {
 
@@ -93,6 +94,26 @@ if (cli.command == 'init'){
     gotPassword = Promise.resolve(opts)
   }
 
+  function saveConfig(config){
+    if ((copts.prompt || copts.hostname) && !copts.save) return Promise.resolve(config);
+
+    let options = {
+      hostname   : config.hostname,
+      version    : config.version,
+      username   : config.username,
+      cartridges : config.cartridges,
+      password   : config.password,
+      follow     : config.follow,
+    };
+
+    return new Promise((resolve, reject) => {
+      fs.writeFile(path.join(root, 'dw.json'), JSON.stringify(options, null, 2), (err) => {
+        if (err) reject(err);
+        resolve(config);
+      })
+    });
+  }
+
   gotPassword.then((opts) => {
     if (copts.save){
       fs.writeFileSync(path.join(root, 'dw.json'), JSON.stringify(opts, null, 2))
@@ -101,6 +122,7 @@ if (cli.command == 'init'){
     opts.root               = root
     opts.cartridges         = path.join(root, opts.cartridges)
     opts.prompt             = prompt.getPassword
+    opts.saveConfig         = saveConfig
     opts.stabilityThreshold = copts.stability
 
     switch (cli.command){
@@ -122,5 +144,6 @@ if (cli.command == 'init'){
     default:
       usage('command')
     }
-  })
+  }).catch(() => {
+  });
 }

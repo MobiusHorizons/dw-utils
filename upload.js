@@ -28,13 +28,28 @@ function upload(config){
     }
 
   }
-  
-  function authError(){
+
+  let tries = 0;
+  function authError(e){
+    if (e == 'EXIT') return Promise.reject('EXIT');
+
+    if (tries >= 3) {
+      console.log(`Could Not Connect after ${tries} attempts.`);
+      return Promise.reject('EXIT');
+    }
+
     console.log('Invalid Username or Password')
-    return config.prompt().then((password) => {
-      server = new dwServer(host, 'dw-utils', username, password)
-      return server.auth()
-    }).catch(authError)
+    tries ++;
+
+    return config.prompt(config)
+      .catch(() => Promise.reject('EXIT'))
+      .then((config) =>{
+        server = new dwServer(config.hostname, 'dw-utils', config.username, config.password);
+        return server.auth()
+          .then(() => {
+            return config.saveConfig(config).catch(() => {})
+          });
+      }).catch(authError);
   }
 
   server.auth()

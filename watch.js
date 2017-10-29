@@ -22,6 +22,29 @@ function watch(config){
 
   var server = new dwServer(host, 'dw-utils', username, password)
 
+  let tries = 0;
+  function authError(e){
+    if (e == 'EXIT') return Promise.reject('EXIT');
+
+    if (tries >= 3) {
+      console.log(`Could Not Connect after ${tries} attempts.`);
+      return Promise.reject('EXIT');
+    }
+
+    console.log('Invalid Username or Password')
+    tries ++;
+
+    return config.prompt(config)
+      .catch(() => Promise.reject('EXIT'))
+      .then((config) =>{
+        server = new dwServer(config.hostname, 'dw-utils', config.username, config.password);
+        return server.auth()
+          .then(() => {
+            return config.saveConfig(config).catch(() => {})
+          });
+      }).catch(authError);
+  }
+
   var current_line = 0
   var upload_queue = []
   var uploading = false
@@ -126,7 +149,7 @@ function watch(config){
 
   function out(value, line){
     value = squeeze(value);
-    var newline = (line == null)
+    var newline = (arguments.length > 1)
 
     line = line || current_line
     var moved_lines = current_line - line
@@ -184,16 +207,36 @@ function watch(config){
     out(chalk.yellow.bold(' -- Waiting for changes --'))
   }
 
-  chokidar.watch(cartridges, {persistent: true, ignoreInitial: true, awaitWriteFinish: {
-    stabilityThreshold: config.stabilityThreshold, pollInterval: 50}
-  })
-  .on('add'   , upload('added'))
-  .on('change', upload('changed'))
-  .on('unlink', unlink)
-  .on('addDir', mkdir)
-  .on('unlinkDir', unlink)
-  .on('error', error)
-  .on('ready', ready)
+  let statusLine = out(chalk.yellow('Connecting ... '))
+  server.auth()
+    .catch((e) => {
+      out(chalk.red('Connecting ... Error'), statusLine)
+      return authError(e).then(() => {
+        out(chalk.green('Connecting ... success'), statusLine - (3 * tries))
+      })
+    })
+    .then(() => {
+      out(chalk.green('Connecting ... success'), statusLine)
+
+      chokidar.watch(cartridges, {
+        persistent: true,
+        ignoreInitial: true,
+        awaitWriteFinish: {
+          stabilityThreshold: config.stabilityThreshold,
+          pollInterval: 50
+        }
+      }).on('add'   , upload('added'))
+        .on('change', upload('changed'))
+        .on('unlink', unlink)
+        .on('addDir', mkdir)
+        .on('unlinkDir', unlink)
+        .on('error', error)
+        .on('ready', ready)
+    })
+    .catch(e => {
+      if (e == 'EXIT') return;
+      out(chalk.red(e));
+    })
 
 }
 const lowPriority = [

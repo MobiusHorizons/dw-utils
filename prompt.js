@@ -1,5 +1,5 @@
 'use strict'
-var 
+var
   dwServer = require('dw-webdav'),
   read     = require('read')
 
@@ -34,7 +34,7 @@ function getHostname(config){
   return new Promise((resolve, reject) => {
     read({
       'prompt' : 'Hostname:',
-      'default': config.hostname 
+      'default': config.hostname
     },(err, value) => {
       if (err){
         reject(err)
@@ -56,7 +56,7 @@ function getUsername(config){
         reject(err)
         return
       }
-      config.username = value 
+      config.username = value
       resolve(config)
     })
   })
@@ -74,8 +74,7 @@ function getPassword(config){
         reject(err)
         return
       }
-      config.password = value 
-      resolve(config)
+      resolve(Object.assign({}, config, {password : value}));
     })
   })
 }
@@ -90,7 +89,7 @@ function getVersion(config){
         reject(err)
         return
       }
-      config.version = value 
+      config.version = value
       resolve(config)
     })
   })
@@ -106,7 +105,7 @@ function getCartridges(config){
         reject(err)
         return
       }
-      config.cartridges = value 
+      config.cartridges = value
       resolve(config)
     })
   })
@@ -115,12 +114,14 @@ function getCartridges(config){
 function init(config){
 
   function creds(error){
+    if (error == 'EXIT') return Promise.reject('EXIT');
     if (error) {
       console.log('Error: ', error)
     }
     return getHostname(config)
     .then(getUsername)
     .then(getPassword)
+    .catch((e) => Promise.reject('EXIT'))
     .then((config) => {
       process.stdout.write('Checking Credentials ... ');
       var server = new dwServer(config.hostname, 'dw-utils', config.username, config.password)
