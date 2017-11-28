@@ -149,7 +149,7 @@ function watch(config){
 
   function out(value, line){
     value = squeeze(value);
-    var newline = (arguments.length > 1)
+    var newline = arguments.length == 1;
 
     line = line || current_line
     var moved_lines = current_line - line
