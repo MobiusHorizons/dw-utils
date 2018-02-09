@@ -23,6 +23,10 @@ function zip(cartridges, metadataPath, outfile){
         reject(err)
         return
       }
+      if (matches.length === 0){
+        reject('No matches for cartridges provided in dw.json')
+        return
+      }
       for (var i = 0; i < matches.length; i++){
         var file = matches[i]
         //var compress = !/\.(png|gif|jpg|jpeg)$/.test(file)
