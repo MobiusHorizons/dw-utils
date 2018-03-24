@@ -37,7 +37,7 @@ The following flags are recognized
 | -C, --cartridges | Path to Cartridges from project root (Default is 'cartridges')       |
 | --save           | Save settings for future use                                         |
 | -a --activate    | Activates the version after a `clean` or an `upload-version`         |
-| -S, --stability  | Length of time the file's size should stay the same before uploading |
+| -s, --stability  | Length of time the file's size should stay the same before uploading |
 | -f, --follow     | Display only new changes for `log` compare to `tail -f`              |
 | -p, --prompt     | Prompt for password                                                  |
 | -h, --help       | Display help and usage details                                       |
